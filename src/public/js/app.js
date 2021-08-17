@@ -25,7 +25,7 @@ socket.addEventListener("close", () => { // 서버가 연결을 종료
 function handleSubmit(event) {
 	event.preventDefault();
 	const input = messageForm.querySelector("input");
-	socket.send(makeMessage("new_msg", input.value));
+	socket.send(makeMessage("new_message", input.value));
 	input.value = "";
 }
 
@@ -33,6 +33,8 @@ function handleNickSubmit(event) {
 	event.preventDefault();
 	const input = nickForm.querySelector("input");
 	socket.send(makeMessage("nickname", input.value));
+	input.value = "";
+
 }
 
 messageForm.addEventListener("submit", handleSubmit);
