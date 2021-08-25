@@ -15,13 +15,20 @@ const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer);
 
 wsServer.on("connection", socket => {
-	socket.onAny((event) => {
+	socket.onAny((event) => { // onAny는 어느 event에서든 log를 볼 수 있음
 		console.log(`Socket Event: ${event}`);
 	});
 	socket.on("enter_room", (roomName, done) => {
 		socket.join(roomName); // 방에 참가 
+		done(); // done을 호출하면 front의 showRoom 실행
+		socket.to(roomName).emit("welcome"); // 방에 있는 모든 사람에게(본인제외) emit
+	});
+	socket.on("disconnecting", () => { // client가 접속을 중단하지만 아직 방을 완전히 나가지 않음
+		socket.rooms.forEach((room) => socket.to(room).emit("bye")); // 접속한 모든 방에 메시지를 보냄
+	});
+	socket.on("new_message", (msg, room, done) => {
+		socket.to(room).emit("new_message", msg);
 		done();
-		socket.to(roomName).emit("welcome"); // 방에 있는 모든 사람에게 emit
 	});
 });
 

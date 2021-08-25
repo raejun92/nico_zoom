@@ -1,4 +1,4 @@
-const socket = io();
+const socket = io(); // 브라우저에 설치한 io를 사용
 
 const welcome = document.querySelector("#welcome");
 const form = welcome.querySelector("form");
@@ -15,17 +15,29 @@ function addMessage(message) {
 	ul.appendChild(li);
 }
 
+function handleMessageSubmit(event) {
+	event.preventDefault();
+	const input = room.querySelector("input");
+	const value = input.value;
+	socket.emit("new_message", input.value, roomName, () => {
+		addMessage(`You: ${value}`);
+	}); // 백엔드로 message를 보냄
+	input.value = "";
+}
+
 function showRoom() {
 	welcome.hidden = true;
 	room.hidden = false;
 	const h3 = room.querySelector("h3");
 	h3.innerText = `Room ${roomName}`;
+	const form = room.querySelector("form");
+	form.addEventListener("submit", handleMessageSubmit);
 }
 
 function handleRoomSubmit(event) {
 	event.preventDefault();
 	const input = form.querySelector("input");
-	socket.emit("enter_room", input.value, showRoom);
+	socket.emit("enter_room", input.value, showRoom); // event를 보냄
 	roomName = input.value;
 	input.value = "";
 }
@@ -35,3 +47,9 @@ form.addEventListener("submit", handleRoomSubmit);
 socket.on("welcome", () => {
 	addMessage("Someone joined!");
 });
+
+socket.on("bye", () => {
+	addMessage("Someone left T^T");
+});
+
+socket.on("new_message", addMessage);
