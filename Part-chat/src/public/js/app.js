@@ -69,7 +69,7 @@ socket.on("new_message", addMessage);
 socket.on("room_change", (rooms) => {
 	const roomList = welcome.querySelector("ul");
 	roomList.innerHTML = ""; // 방을 나가면 목록에서 삭제
-	rooms.forEach(room => {
+	rooms.forEach(room => { // 방 목록 생성
 		const li = document.createElement("li");
 		li.innerText = room;
 		roomList.append(li);

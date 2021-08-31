@@ -20,7 +20,7 @@ function publicRooms() {
 	// 위와 같다
 	const {sockets: {adapter: {sids, rooms}}} = wsServer;
 	const publicRooms = [];
-	rooms.forEach((_, key) => {
+	rooms.forEach((_, key) => { // set으로 되어 있음
 		if (sids.get(key) === undefined) {
 			publicRooms.push(key);
 		}
@@ -30,6 +30,13 @@ function publicRooms() {
 
 function countRoom(roomName) {
 	return wsServer.sockets.adapter.rooms.get(roomName)?.size;
+	/* 
+		if(wsServer.sockets.adapter.rooms.get(roomName)){
+		return wsServer.sockets.adapter.rooms.get(roomName).size
+		} else {
+		return undefined;
+		}
+	*/
 }
 
 wsServer.on("connection", socket => {
